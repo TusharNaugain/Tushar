@@ -48,7 +48,7 @@ const PropertyThumbnails = () => {
     <div className="relative m-auto w-full h-[90vh] overflow-hidden">
       <motion.div
         ref={galRef}
-        className="relative w-[1250px] h-[60vw] whitespace-nowrap overflow-x-scroll scrollbar-hidden"
+        className="relative w-[1525px] h-[60vw] whitespace-nowrap overflow-x-scroll scrollbar-hidden"
       >
         {/* Map through the services array to dynamically create boxes */}
         {services.map((service, index) => (
