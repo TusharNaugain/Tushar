@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'FoundersGrotesk';
+    src: url('./FoundersGrotesk-Semibold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: 'Sora';
+    src: url('./Sora.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+  }
+  
