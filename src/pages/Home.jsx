@@ -4,7 +4,7 @@ import LandingPage from '../components/Landingpage'
 import Marq from '../components/Marq'
 import'../assets/fonts.css'
 import About from '../components/About'
-import Buzz from '../components/Buzz'
+
 
 
 import Cards from '../components/Cards'

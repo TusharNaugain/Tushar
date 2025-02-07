@@ -8,7 +8,7 @@ const Sidebar = () => {
     { name: "Services", href: "/services" },
     { name: "Work", href: "/work" },
     { name: "About Us", href: "/about" },
-    { name: "Insights", href: "/insights" },
+    { name: "Blogger", href: "/blogger" },
     { name: "Contact Us", href: "/contact" },
   ];
 

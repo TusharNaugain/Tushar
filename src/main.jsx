@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home.jsx';
 import OurServices from './pages/OurServices.jsx';
 import Work from './pages/Work.jsx'
-
+import Blogger from './pages/Blogger.jsx';
 import AboutUs from './pages/AboutUs.jsx';
 import './index.css';
 
@@ -21,6 +21,8 @@ createRoot(document.getElementById('root')).render(
          <Route path="/work" element={<Work />} />
           {/* Define the route for work component */}
           <Route path="/about" element={<AboutUs />} />
+
+          <Route path="/blogger" element={<Blogger />} />
 
       </Routes>
     </Router>

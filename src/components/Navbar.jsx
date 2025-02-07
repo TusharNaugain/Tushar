@@ -1117,8 +1117,8 @@ viewBox="0 0 73 30"
         {[{name:"Services", href:"/services"},
           {name:"Work", href:"/work"},
           {name:"About Us", href:"/about"},
-          {name:"Insights", href:"/insights"},
-          {name:"Contact Us", href:"/contact"}
+          {name:"Blogger", href:"/blogger"},
+          
 
         ].map(
           (item, index) => (

@@ -1,88 +1,184 @@
-import { motion } from 'framer-motion';
-import React, { useEffect, useRef, useState } from 'react';
-import 'tailwindcss/tailwind.css';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowLeft, ArrowRight, Zap, Target, Users, Megaphone } from 'lucide-react';
 
-const PropertyThumbnails = () => {
-  const galRef = useRef(null);
-  const [mX2, setMX2] = useState(0);
-  const [posX, setPosX] = useState(0);
+const services = [
+  {
+    name: "Social Media",
+    description: "At ATBuzz, we specialize in crafting unique, audience-focused social media strategies that bring your brand's voice to life.",
+    icon: <Users className="w-12 h-12" />,
+    color: "from-purple-500 to-pink-500"
+  },
+  {
+    name: "Performance Marketing",
+    description: "ATBuzz delivers results-driven performance marketing, focusing on high ROI through paid search, display ads, and affiliate marketing.",
+    icon: <Target className="w-12 h-12" />,
+    color: "from-cyan-500 to-blue-500"
+  },
+  {
+    name: "Influencer Marketing",
+    description: "At ATBuzz, we specialize in influencer marketing, creating campaigns that connect brands with the right audience.",
+    icon: <Zap className="w-12 h-12" />,
+    color: "from-yellow-500 to-orange-500"
+  },
+  {
+    name: "Public Relations",
+    description: "ATBuzz is dedicated to building trust and credibility for your brand through strategic, impactful PR.",
+    icon: <Megaphone className="w-12 h-12" />,
+    color: "from-green-500 to-emerald-500"
+  }
+];
 
-  // Array containing the labels for the boxes and their respective descriptions
-  const services = [
-    { name: "Social Media", description: "Boost your brand visibility through tailored social media strategies.", bgColor: "#FDF135" },
-    { name: "Performance Marketing", description: "Maximize ROI with data-driven performance marketing campaigns.", bgColor: "#FDF135" },
-    { name: "Influencer", description: "Leverage the power of influencers to amplify your message.", bgColor: "#FDF135" },
-    { name: "Public Relations", description: "Build trust and maintain your brand image with effective PR strategies.", bgColor: "#FDF135" },
-  ];
+function ServiceCarousel() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
 
-  useEffect(() => {
-    const $gal = galRef.current;
-    const galW = $gal.offsetWidth;
-    const galSW = $gal.scrollWidth;
-    const wDiff = galSW / galW - 1; // Widths difference ratio
-    const mPadd = 60; // Mousemove Padding
-    const damp = 20; // Mousemove response softness
-    const mmAA = galW - mPadd * 2; // The mousemove available area
-    const mmAAr = galW / mmAA; // Get available mousemove difference ratio
+  const slideVariants = {
+    enter: (direction) => ({
+      x: direction > 0 ? 1000 : -1000,
+      opacity: 0
+    }),
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1
+    },
+    exit: (direction) => ({
+      zIndex: 0,
+      x: direction < 0 ? 1000 : -1000,
+      opacity: 0
+    })
+  };
 
-    const handleMouseMove = (e) => {
-      const mX = e.pageX - $gal.getBoundingClientRect().left;
-      const modifiedMX2 = Math.min(Math.max(0, mX - mPadd), mmAA) * mmAAr;
-      setMX2(modifiedMX2);
-    };
+  const swipeConfidenceThreshold = 10000;
+  const swipePower = (offset, velocity) => {
+    return Math.abs(offset) * velocity;
+  };
 
-    $gal.addEventListener('mousemove', handleMouseMove);
-
-    const intervalId = setInterval(() => {
-      setPosX((prevPosX) => prevPosX + (mX2 - prevPosX) / damp);
-      $gal.scrollLeft = posX * wDiff;
-    }, 10);
-
-    return () => {
-      $gal.removeEventListener('mousemove', handleMouseMove);
-      clearInterval(intervalId);
-    };
-  }, [mX2, posX]);
+  const paginate = (newDirection) => {
+    setDirection(newDirection);
+    setCurrentIndex((prevIndex) => (prevIndex + newDirection + services.length) % services.length);
+  };
 
   return (
-    <div className="relative m-auto w-full h-[90vh] overflow-hidden">
-      <motion.div
-        ref={galRef}
-        className="relative w-[1525px] h-[60vw] whitespace-nowrap overflow-x-scroll scrollbar-hidden"
+    <div className="relative h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-black to-gray-900">
+      {/* Background Animation */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute w-[500px] h-[500px] bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur-3xl animate-pulse -top-48 -left-48"></div>
+        <div className="absolute w-[500px] h-[500px] bg-gradient-to-r from-pink-500 to-red-500 rounded-full blur-3xl animate-pulse -bottom-48 -right-48"></div>
+      </div>
+
+      {/* Navigation Buttons */}
+      <motion.button
+        className="absolute left-4 z-10 p-2 rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-colors"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={() => paginate(-1)}
       >
-        {/* Map through the services array to dynamically create boxes */}
-        {services.map((service, index) => (
+        <ArrowLeft className="w-6 h-6" />
+      </motion.button>
+
+      <motion.button
+        className="absolute right-4 z-10 p-2 rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-colors"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={() => paginate(1)}
+      >
+        <ArrowRight className="w-6 h-6" />
+      </motion.button>
+
+      {/* Carousel */}
+      <div className="relative w-full max-w-4xl h-[600px] flex items-center justify-center">
+        <AnimatePresence initial={false} custom={direction}>
           <motion.div
-            key={index}
-            className={`card inline-block h-[50vw] w-[33vw] align-middle bg-zinc-50  border-x-[1px] border-black relative`}
-            whileHover={{
-              scale: 1.1,
-              backgroundColor: service.bgColor,
-              color: '#fff',
-              transition: { duration: 0.3 }
-              
+            key={currentIndex}
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{
+              x: { type: "spring", stiffness: 300, damping: 30 },
+              opacity: { duration: 0.2 }
             }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={1}
+            onDragEnd={(e, { offset, velocity }) => {
+              const swipe = swipePower(offset.x, velocity.x);
+
+              if (swipe < -swipeConfidenceThreshold) {
+                paginate(1);
+              } else if (swipe > swipeConfidenceThreshold) {
+                paginate(-1);
+              }
+            }}
+            className="absolute w-full"
           >
-            {/* Container for the heading and description */}
-            <div className="relative text-center text-xl h-full">
-              {/* Service name */}
-              <motion.div className="absolute service-name mb-2 mt-[12vw] w-full font-founders text-[4vw] ">
-                {service.name}
-              </motion.div>
-              
-              {/* Service description, hidden by default, becomes visible on hover */}
+            <div className="w-full px-4">
               <motion.div
-                className=" desc absolute service-description opacity-0 transition-opacity duration-300 ease-in-out over font-founders leading-tight w-full h-full  text-[3vh] pt-[20vw] "
-                whileHover={{ opacity: 1 }}
+                className={`w-full h-[500px] rounded-2xl bg-gradient-to-br ${services[currentIndex].color} p-8 text-white shadow-2xl backdrop-blur-lg border border-white/10`}
+                initial={{ y: 10, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.2 }}
               >
-                {service.description}
+                <div className="h-full flex flex-col items-center justify-between">
+                  {/* Icon */}
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                    className="p-6 bg-white/10 rounded-full backdrop-blur-sm"
+                  >
+                    {services[currentIndex].icon}
+                  </motion.div>
+
+                  {/* Content */}
+                  <div className="text-center space-y-6">
+                    <motion.h2
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.3 }}
+                      className="text-4xl font-bold tracking-tight"
+                    >
+                      {services[currentIndex].name}
+                    </motion.h2>
+                    <motion.p
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.4 }}
+                      className="text-lg text-white/90 max-w-2xl"
+                    >
+                      {services[currentIndex].description}
+                    </motion.p>
+                  </div>
+
+                  {/* Progress Dots */}
+                  <div className="flex space-x-2">
+                    {services.map((_, index) => (
+                      <motion.div
+                        key={index}
+                        className={`w-2 h-2 rounded-full ${
+                          index === currentIndex ? 'bg-white' : 'bg-white/30'
+                        }`}
+                        whileHover={{ scale: 1.2 }}
+                        onClick={() => {
+                          const direction = index - currentIndex;
+                          setDirection(direction);
+                          setCurrentIndex(index);
+                        }}
+                        style={{ cursor: 'pointer' }}
+                      />
+                    ))}
+                  </div>
+                </div>
               </motion.div>
             </div>
           </motion.div>
-        ))}
-      </motion.div>
+        </AnimatePresence>
+      </div>
     </div>
   );
-};
+}
 
-export default PropertyThumbnails;
+export default ServiceCarousel;
